@@ -1,0 +1,79 @@
+<head>
+  <style>
+
+    body {
+      margin: 0;
+    }
+
+    main {
+      margin: 10px;
+    }
+
+    .header {
+      padding: 10px;
+      background: #ee1111;
+      color: white;
+    }
+    .source-view {
+      border: 10px solid lightgray;
+      width: 800px;
+      height: 400px;
+      overflow: scroll;
+    }
+
+    .line {
+      white-space: pre-wrap;
+    }
+    .line-num {
+      background: lightgray;
+      padding: 0 10px;
+    }
+    .line.error, .line-num.error {
+      background-color: #ff7777;
+    }
+
+    pre {
+      padding: 3px 0px;
+      height: 1em;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h2 class='header'><%=e.class%>: <%=e.message%></h2>
+
+
+
+  <main >
+    <h4>Extracted source from <%= File.expand_path(source_file_name(e)) %> (around line <b><%=source_file_line_num(e)%></b>):</h4>
+
+    <div class='source-view'>
+      <table id="table" cellpadding="0" cellspacing="0">
+        <% source_file(e).each_with_index do |line, num| %>
+          <tr>
+            <td class="line-num <%= source_file_line_num(e).to_i == num + 1 ? "error"  : "" %>">
+               <%= num + 1 %>
+             </td>
+            <td>
+              <pre id="<%="line-#{num + 1}" %>"
+                class="line <%= source_file_line_num(e).to_i == num + 1 ? "error"  : "" %>"><code>
+                <%= line %>
+              <code></pre>
+             </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+
+    <h3>Stack Trace:</h3>
+    <% e.backtrace.each do |line| %>
+      <%= line %> <br>
+    <% end %>
+  </main>
+</body>
+
+<script type="text/javascript">
+  const line = document.getElementById("<%="line-#{source_file_line_num(e)}"%>")
+  document.getElementsByClassName("source-view")[0].scrollTop = line.parentElement.parentElement.offsetTop - 200
+</script>
